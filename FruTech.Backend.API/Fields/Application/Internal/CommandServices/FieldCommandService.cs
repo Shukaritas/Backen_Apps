@@ -1,4 +1,4 @@
-﻿using FruTech.Backend.API.Fields.Domain.Model.Commands;
+﻿﻿using FruTech.Backend.API.Fields.Domain.Model.Commands;
 using FruTech.Backend.API.Fields.Domain.Model.Entities;
 using FruTech.Backend.API.Fields.Domain.Model.Repositories;
 using FruTech.Backend.API.Fields.Domain.Services;
@@ -31,8 +31,6 @@ public class FieldCommandService : IFieldCommandService
         var field = new Field
         {
             UserId = command.UserId,
-            // keep ImageUrl as placeholder; ToResource will transform BLOB to data URI
-            ImageUrl = string.Empty,
             ImageContent = command.ImageContent,
             ImageContentType = command.ImageContentType,
             Name = command.Name,

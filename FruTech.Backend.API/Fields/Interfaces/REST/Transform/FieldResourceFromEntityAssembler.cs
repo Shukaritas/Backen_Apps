@@ -9,12 +9,23 @@ public static class FieldResourceFromEntityAssembler
 {
     public static FieldResource ToResource(Field entity)
     {
-        // Extract IDs without loading heavy collections
         var progressHistoryId = entity.ProgressHistory?.Id;
-        var cropFieldId = entity.CropFieldId; // explicitly mapped in AppDbContext
+        var cropFieldId = entity.CropField?.Id;
         var tasks = entity.Tasks?.Select(t => TaskResourceFromEntityAssembler.ToResourceFromEntity(t)).ToList() ?? new List<TaskResource>();
 
         var imageUrl = BuildImageUrl(entity);
+        
+        // Extract crop data if available
+        var cropName = entity.CropField?.Crop ?? string.Empty;
+        var soilType = entity.CropField?.SoilType ?? string.Empty;
+        var sunlight = entity.CropField?.Sunlight ?? string.Empty;
+        var watering = entity.CropField?.Watering ?? string.Empty;
+        var plantingDate = entity.CropField?.PlantingDate?.ToString("yyyy-MM-dd") ?? string.Empty;
+        var harvestDate = entity.CropField?.HarvestDate?.ToString("yyyy-MM-dd") ?? string.Empty;
+        var daysSincePlanting = entity.CropField?.PlantingDate != null 
+            ? ((int)(DateTime.UtcNow - entity.CropField.PlantingDate.Value).TotalDays).ToString()
+            : string.Empty;
+        var cropStatus = entity.CropField?.Status.ToString() ?? string.Empty;
 
         return new FieldResource(
             entity.Id,
@@ -25,23 +36,15 @@ public static class FieldResourceFromEntityAssembler
             entity.FieldSize,
             progressHistoryId,
             cropFieldId,
-            tasks
-        );
-    }
-
-    public static FieldResource ToResource(Field entity, IReadOnlyList<TaskResource> tasks, int? progressHistoryId)
-    {
-        var imageUrl = BuildImageUrl(entity);
-        return new FieldResource(
-            entity.Id,
-            entity.UserId,
-            imageUrl,
-            entity.Name,
-            entity.Location,
-            entity.FieldSize,
-            progressHistoryId,
-            entity.CropFieldId,
-            tasks
+            tasks,
+            cropName,
+            soilType,
+            sunlight,
+            watering,
+            plantingDate,
+            harvestDate,
+            daysSincePlanting,
+            cropStatus
         );
     }
 
@@ -53,7 +56,7 @@ public static class FieldResourceFromEntityAssembler
             var contentType = string.IsNullOrWhiteSpace(entity.ImageContentType) ? "image/jpeg" : entity.ImageContentType;
             return $"data:{contentType};base64,{base64}";
         }
-        // fallback to existing ImageUrl (may be empty string)
-        return entity.ImageUrl;
+        return string.Empty;
     }
 }
+

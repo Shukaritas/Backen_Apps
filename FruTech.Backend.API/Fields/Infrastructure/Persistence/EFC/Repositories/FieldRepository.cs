@@ -34,6 +34,9 @@ namespace FruTech.Backend.API.Fields.Infrastructure.Persistence.EFC.Repositories
         public async Task<IEnumerable<Field>> FindByUserIdAsync(int userId)
         {
             return await Context.Fields
+                .Include(f => f.CropField)
+                .Include(f => f.Tasks)
+                .Include(f => f.ProgressHistory)
                 .Where(f => f.UserId == userId)
                 .AsNoTracking()
                 .ToListAsync();
