@@ -14,10 +14,12 @@ public static class FieldResourceFromEntityAssembler
         var cropFieldId = entity.CropFieldId; // explicitly mapped in AppDbContext
         var tasks = entity.Tasks?.Select(t => TaskResourceFromEntityAssembler.ToResourceFromEntity(t)).ToList() ?? new List<TaskResource>();
 
+        var imageUrl = BuildImageUrl(entity);
+
         return new FieldResource(
             entity.Id,
             entity.UserId,
-            entity.ImageUrl,
+            imageUrl,
             entity.Name,
             entity.Location,
             entity.FieldSize,
@@ -29,10 +31,11 @@ public static class FieldResourceFromEntityAssembler
 
     public static FieldResource ToResource(Field entity, IReadOnlyList<TaskResource> tasks, int? progressHistoryId)
     {
+        var imageUrl = BuildImageUrl(entity);
         return new FieldResource(
             entity.Id,
             entity.UserId,
-            entity.ImageUrl,
+            imageUrl,
             entity.Name,
             entity.Location,
             entity.FieldSize,
@@ -40,5 +43,17 @@ public static class FieldResourceFromEntityAssembler
             entity.CropFieldId,
             tasks
         );
+    }
+
+    private static string BuildImageUrl(Field entity)
+    {
+        if (entity.ImageContent != null && entity.ImageContent.Length > 0)
+        {
+            var base64 = Convert.ToBase64String(entity.ImageContent);
+            var contentType = string.IsNullOrWhiteSpace(entity.ImageContentType) ? "image/jpeg" : entity.ImageContentType;
+            return $"data:{contentType};base64,{base64}";
+        }
+        // fallback to existing ImageUrl (may be empty string)
+        return entity.ImageUrl;
     }
 }

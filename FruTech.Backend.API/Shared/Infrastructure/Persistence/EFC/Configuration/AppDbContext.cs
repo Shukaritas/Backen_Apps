@@ -90,6 +90,9 @@ namespace FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Configuratio
             builder.Entity<Field>().Property(f => f.Location).HasMaxLength(300);
             builder.Entity<Field>().Property(f => f.ImageUrl).HasMaxLength(500);
             builder.Entity<Field>().Property(f => f.FieldSize).HasMaxLength(50);
+            // New columns for image storage (BLOB + content type)
+            builder.Entity<Field>().Property(f => f.ImageContent).HasColumnType("LONGBLOB");
+            builder.Entity<Field>().Property(f => f.ImageContentType).HasMaxLength(100);
 
             // Relación User 1:N Fields
             builder.Entity<Field>()

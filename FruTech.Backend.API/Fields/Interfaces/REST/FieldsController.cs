@@ -4,6 +4,7 @@ using FruTech.Backend.API.Fields.Domain.Model.Queries;
 using FruTech.Backend.API.Fields.Domain.Services;
 using FruTech.Backend.API.Fields.Interfaces.REST.Resources;
 using FruTech.Backend.API.Fields.Interfaces.REST.Transform;
+using Microsoft.AspNetCore.Http;
 
 namespace FruTech.Backend.API.Fields.Interfaces.REST;
 
@@ -25,18 +26,48 @@ public class FieldsController : ControllerBase
         _fieldQueryService = fieldQueryService;
     }
 
+    public class CreateFieldRequest
+    {
+        public int UserId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public string FieldSize { get; set; } = string.Empty;
+        public IFormFile? Image { get; set; }
+    }
+
     /// <summary>
     /// Creates a new field and its associated ProgressHistory automatically
     /// </summary>
-    /// <param name="command">CreateField command data (UserId, ImageUrl, Name, Location, FieldSize)</param>
+    /// <param name="request">CreateField form data (UserId, Name, Location, FieldSize, Image)</param>
     /// <response code="201">Field created successfully</response>
     /// <response code="400">Invalid data</response>
     [HttpPost]
+    [Consumes("multipart/form-data")]
     public async Task<IActionResult> CreateField(
-        [FromBody] CreateFieldCommand command)
+        [FromForm] CreateFieldRequest request)
     {
         try
         {
+            byte[]? imageBytes = null;
+            string? contentType = null;
+
+            if (request.Image != null && request.Image.Length > 0)
+            {
+                using var ms = new MemoryStream();
+                await request.Image.CopyToAsync(ms);
+                imageBytes = ms.ToArray();
+                contentType = request.Image.ContentType;
+            }
+
+            var command = new CreateFieldCommand(
+                request.UserId,
+                imageBytes,
+                contentType,
+                request.Name,
+                request.Location,
+                request.FieldSize
+            );
+
             var field = await _fieldCommandService.Handle(command);
             var resource = FieldResourceFromEntityAssembler.ToResource(field);
             return CreatedAtAction(nameof(GetFieldById), new { id = field.Id }, resource);

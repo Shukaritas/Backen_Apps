@@ -49,7 +49,8 @@ public class FieldQueryService : IFieldQueryService
         return results.Select(r => new FieldResource(
             r.Field.Id,
             r.Field.UserId,
-            r.Field.ImageUrl,
+            // use assembler to respect BLOB to Data URI conversion
+            FieldResourceFromEntityAssembler.ToResource(r.Field).ImageUrl,
             r.Field.Name,
             r.Field.Location,
             r.Field.FieldSize,
@@ -70,10 +71,13 @@ public class FieldQueryService : IFieldQueryService
 
         var taskResources = tasks.Select(t => TaskResourceFromEntityAssembler.ToResourceFromEntity(t)).ToList();
 
+        // Use assembler to build imageUrl
+        var imageUrl = FieldResourceFromEntityAssembler.ToResource(field).ImageUrl;
+
         return new FieldResource(
             field.Id,
             field.UserId,
-            field.ImageUrl,
+            imageUrl,
             field.Name,
             field.Location,
             field.FieldSize,

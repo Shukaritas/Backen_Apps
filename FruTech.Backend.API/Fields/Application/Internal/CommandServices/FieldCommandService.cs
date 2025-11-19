@@ -31,7 +31,10 @@ public class FieldCommandService : IFieldCommandService
         var field = new Field
         {
             UserId = command.UserId,
-            ImageUrl = command.ImageUrl,
+            // keep ImageUrl as placeholder; ToResource will transform BLOB to data URI
+            ImageUrl = string.Empty,
+            ImageContent = command.ImageContent,
+            ImageContentType = command.ImageContentType,
             Name = command.Name,
             Location = command.Location,
             FieldSize = command.FieldSize
@@ -57,4 +60,3 @@ public class FieldCommandService : IFieldCommandService
         return field;
     }
 }
-
