@@ -6,9 +6,12 @@ public static class TaskResourceFromEntityAssembler
 {
     public static TaskResource ToResourceFromEntity(Domain.Model.Aggregate.Task entity)
     {
+        var fieldName = entity.Field?.Name ?? "Unknown";
+        
         return new TaskResource(
             entity.Id,
             entity.FieldId,
+            fieldName,
             entity.Description,
             entity.DueDate,
             entity.CreatedDate,

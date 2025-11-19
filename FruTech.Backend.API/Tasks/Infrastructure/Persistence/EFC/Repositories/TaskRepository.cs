@@ -15,18 +15,22 @@ public class TaskRepository : ITaskRepository
 
     public async Task<IEnumerable<Domain.Model.Aggregate.Task>> GetAllAsync()
     {
-        return await _context.Set<Domain.Model.Aggregate.Task>().ToListAsync();
+        return await _context.Set<Domain.Model.Aggregate.Task>()
+            .Include(t => t.Field)
+            .ToListAsync();
     }
 
     public async Task<Domain.Model.Aggregate.Task?> GetByIdAsync(int id)
     {
         return await _context.Set<Domain.Model.Aggregate.Task>()
+            .Include(t => t.Field)
             .FirstOrDefaultAsync(t => t.Id == id);
     }
 
     public async Task<IEnumerable<Domain.Model.Aggregate.Task>> GetByFieldIdAsync(int fieldId)
     {
         return await _context.Set<Domain.Model.Aggregate.Task>()
+            .Include(t => t.Field)
             .Where(t => t.FieldId == fieldId)
             .ToListAsync();
     }

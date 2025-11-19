@@ -1,9 +1,9 @@
-﻿﻿using FruTech.Backend.API.Tasks.Interfaces.REST.Resources;
+﻿﻿﻿using FruTech.Backend.API.Tasks.Interfaces.REST.Resources;
 
 namespace FruTech.Backend.API.Fields.Interfaces.REST.Resources;
 
 /// <summary>
-/// Read resource for Field. Exposes ID references, task objects, and enriched crop data.
+/// Read resource for Field. Exposes ID references, task objects, enriched crop data, and progress history details.
 /// </summary>
 public record FieldResource(
     int Id,
@@ -13,6 +13,7 @@ public record FieldResource(
     string Location,
     string FieldSize,
     int? ProgressHistoryId,
+    ProgressHistoryResource? ProgressHistory,
     int? CropFieldId,
     IReadOnlyList<TaskResource> Tasks,
     string CropName,

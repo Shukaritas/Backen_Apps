@@ -153,7 +153,7 @@ namespace FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Configuratio
             
             builder.Entity<Field>()
                 .HasMany(f => f.Tasks!)
-                .WithOne()
+                .WithOne(t => t.Field)
                 .HasForeignKey(t => t.FieldId)
                 .OnDelete(DeleteBehavior.Cascade);
 

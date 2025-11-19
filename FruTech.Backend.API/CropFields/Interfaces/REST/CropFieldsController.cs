@@ -101,7 +101,8 @@ public class CropFieldsController : ControllerBase
     {
         var cropField = await _commandService.Handle(id, command);
         if (cropField == null) return NotFound();
-        return Ok(cropField);
+        var resource = CropFieldResourceFromEntityAssembler.ToResource(cropField);
+        return Ok(resource);
     }
 
     /// <summary>
