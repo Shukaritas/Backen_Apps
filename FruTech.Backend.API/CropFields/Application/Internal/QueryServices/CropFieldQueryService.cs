@@ -16,7 +16,7 @@ public class CropFieldQueryService : ICropFieldQueryService
 
     public async Task<IEnumerable<CropField>> Handle(GetAllCropFieldsQuery query)
     {
-        return await _cropFieldRepository.ListAsync();
+        return await _cropFieldRepository.GetAllAsync();
     }
 
     public async Task<CropField?> Handle(GetCropFieldByIdQuery query)
@@ -29,4 +29,3 @@ public class CropFieldQueryService : ICropFieldQueryService
         return await _cropFieldRepository.FindByFieldIdAsync(query.FieldId);
     }
 }
-

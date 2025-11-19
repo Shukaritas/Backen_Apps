@@ -86,6 +86,8 @@ builder.Services.AddScoped<IMediator, Mediator>();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
@@ -105,20 +107,18 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Cleanup migration and UpcomingTasks tables if they exist (once at startup)
+// DEVELOPMENT ONLY: optional cleanup of obsolete tables before EnsureCreated.
+// Uncomment if you need to force recreation (will DROP data!).
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    try
-    {
-        dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS `__EFMigrationsHistory`;");
-        dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS `UpcomingTasks`;");
-        dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS `upcoming_tasks`;");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error cleaning up tables: {ex.Message}");
-    }
+    // Example (commented):
+    // dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS fields;");
+    // dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS crop_fields;");
+    // dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS progress_histories;");
+    // dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS tasks;");
+    // After dropping, recreate schema
+    dbContext.Database.EnsureCreated();
 }
 
 app.UseSwagger();

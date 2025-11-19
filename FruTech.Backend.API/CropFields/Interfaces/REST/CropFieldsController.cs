@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using FruTech.Backend.API.CropFields.Domain.Model.Commands;
 using FruTech.Backend.API.CropFields.Domain.Model.Queries;
 using FruTech.Backend.API.CropFields.Domain.Services;
+using FruTech.Backend.API.CropFields.Interfaces.REST.Transform;
+using FruTech.Backend.API.CropFields.Interfaces.REST.Resources;
 
 namespace FruTech.Backend.API.CropFields.Interfaces.REST;
 
@@ -54,8 +56,9 @@ public class CropFieldsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllCropFields()
     {
-        var cropFields = await _queryService.Handle(new GetAllCropFieldsQuery());
-        return Ok(cropFields);
+        var entities = await _queryService.Handle(new GetAllCropFieldsQuery());
+        var resources = entities.Select(CropFieldResourceFromEntityAssembler.ToResource);
+        return Ok(resources);
     }
 
     /// <summary>

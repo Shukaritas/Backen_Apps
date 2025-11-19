@@ -1,4 +1,4 @@
-﻿using FruTech.Backend.API.Fields.Domain.Model.Commands;
+﻿﻿using FruTech.Backend.API.Fields.Domain.Model.Commands;
 using FruTech.Backend.API.Fields.Domain.Model.Entities;
 using FruTech.Backend.API.Fields.Domain.Model.Repositories;
 using FruTech.Backend.API.Fields.Domain.Services;
@@ -31,7 +31,8 @@ public class FieldCommandService : IFieldCommandService
         var field = new Field
         {
             UserId = command.UserId,
-            ImageUrl = command.ImageUrl,
+            ImageContent = command.ImageContent,
+            ImageContentType = command.ImageContentType,
             Name = command.Name,
             Location = command.Location,
             FieldSize = command.FieldSize
@@ -57,4 +58,3 @@ public class FieldCommandService : IFieldCommandService
         return field;
     }
 }
-

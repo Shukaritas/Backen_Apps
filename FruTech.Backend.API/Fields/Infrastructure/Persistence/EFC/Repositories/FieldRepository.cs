@@ -15,6 +15,9 @@ namespace FruTech.Backend.API.Fields.Infrastructure.Persistence.EFC.Repositories
         public async Task<IEnumerable<Field>> GetAllAsync()
         {
             return await Context.Fields
+                .Include(f => f.CropField)
+                .Include(f => f.ProgressHistory)
+                .Include(f => f.Tasks)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -22,18 +25,27 @@ namespace FruTech.Backend.API.Fields.Infrastructure.Persistence.EFC.Repositories
         public async Task<Field?> GetByIdAsync(int id)
         {
             return await Context.Fields
+                .Include(f => f.CropField)
+                .Include(f => f.ProgressHistory)
+                .Include(f => f.Tasks)
                 .FirstOrDefaultAsync(f => f.Id == id);
         }
 
         public new async Task<Field?> FindByIdAsync(int id)
         {
             return await Context.Fields
+                .Include(f => f.CropField)
+                .Include(f => f.ProgressHistory)
+                .Include(f => f.Tasks)
                 .FirstOrDefaultAsync(f => f.Id == id);
         }
 
         public async Task<IEnumerable<Field>> FindByUserIdAsync(int userId)
         {
             return await Context.Fields
+                .Include(f => f.CropField)
+                .Include(f => f.ProgressHistory)
+                .Include(f => f.Tasks)
                 .Where(f => f.UserId == userId)
                 .AsNoTracking()
                 .ToListAsync();

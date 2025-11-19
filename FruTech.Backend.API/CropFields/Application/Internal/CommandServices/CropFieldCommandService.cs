@@ -22,13 +22,43 @@ public class CropFieldCommandService : ICropFieldCommandService
 
     public async Task<CropField> Handle(CreateCropFieldCommand command)
     {
-        // Validar que no exista ya un CropField para ese Field (relación 1:1)
-        var existingCropField = await _cropFieldRepository.FindByFieldIdAsync(command.FieldId);
-        if (existingCropField != null)
+        // Buscar cualquier CropField para ese FieldId (incluye borrados)
+        var existing = await _cropFieldRepository.FindAnyByFieldIdAsync(command.FieldId);
+        if (existing != null)
         {
-            throw new InvalidOperationException($"El Field con ID {command.FieldId} ya tiene un CropField asociado.");
+            if (!existing.Deleted)
+            {
+                throw new InvalidOperationException($"El Field con ID {command.FieldId} ya tiene un CropField activo.");
+            }
+
+            // Resurrección: reutilizar la entidad borrada
+            existing.Crop = command.Crop;
+            existing.SoilType = command.SoilType;
+            existing.Sunlight = command.Sunlight;
+            existing.Watering = command.Watering;
+            existing.PlantingDate = command.PlantingDate;
+            existing.HarvestDate = command.HarvestDate;
+            existing.Status = command.Status;
+            existing.Deleted = false;
+            existing.DeletedDate = null;
+            existing.UpdatedDate = DateTimeOffset.Now;
+
+            _cropFieldRepository.Update(existing);
+            await _unitOfWork.CompleteAsync();
+
+            // Asegurar que Field apunte al CropField resucitado
+            var field = await _fieldRepository.FindByIdAsync(command.FieldId);
+            if (field != null)
+            {
+                field.CropFieldId = existing.Id;
+                _fieldRepository.Update(field);
+                await _unitOfWork.CompleteAsync();
+            }
+
+            return existing;
         }
 
+        // No existe: crear nuevo
         var cropField = new CropField
         {
             FieldId = command.FieldId,
@@ -44,18 +74,17 @@ public class CropFieldCommandService : ICropFieldCommandService
         await _cropFieldRepository.AddAsync(cropField);
         await _unitOfWork.CompleteAsync();
 
-        // Update the Field to point to the created CropField
-        var field = await _fieldRepository.FindByIdAsync(command.FieldId);
-        if (field != null)
+        // Actualizar Field.CropFieldId
+        var fieldNew = await _fieldRepository.FindByIdAsync(command.FieldId);
+        if (fieldNew != null)
         {
-            field.CropFieldId = cropField.Id;
-            _fieldRepository.Update(field);
+            fieldNew.CropFieldId = cropField.Id;
+            _fieldRepository.Update(fieldNew);
             await _unitOfWork.CompleteAsync();
         }
 
         return cropField;
     }
-
 
     public async Task<CropField?> Handle(int cropFieldId, UpdateCropFieldCommand command)
     {
