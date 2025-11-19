@@ -67,7 +67,8 @@ namespace FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Configuratio
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
+            builder.UseSnakeCaseNamingConvention();
+            
             // ========== USER ==========
             builder.Entity<UserAggregate>().ToTable("users");
             builder.Entity<UserAggregate>().HasKey(u => u.Id);

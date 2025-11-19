@@ -109,16 +109,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    try
-    {
-        dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS `__EFMigrationsHistory`;");
-        dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS `UpcomingTasks`;");
-        dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS `upcoming_tasks`;");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error cleaning up tables: {ex.Message}");
-    }
+    dbContext.Database.EnsureCreated();
 }
 
 app.UseSwagger();
