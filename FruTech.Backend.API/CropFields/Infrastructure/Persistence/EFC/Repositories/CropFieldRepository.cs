@@ -14,32 +14,46 @@ namespace FruTech.Backend.API.CropFields.Infrastructure.Persistence.EFC.Reposito
 
         public async Task<IEnumerable<CropField>> GetAllAsync()
         {
-            return await Context.CropFields.AsNoTracking().ToListAsync();
+            return await Context.CropFields
+                .Include(c => c.Field)
+                .Where(c => !c.Deleted)
+                .ToListAsync();
         }
 
         public async Task<CropField?> GetByIdAsync(int id)
         {
-            return await Context.CropFields.FindAsync(id);
+            return await Context.CropFields
+                .Include(cf => cf.Field)
+                .FirstOrDefaultAsync(cf => cf.Id == id && !cf.Deleted);
         }
 
-        public async Task<CropField?> FindByIdAsync(int id)
+        public new async Task<CropField?> FindByIdAsync(int id)
         {
             return await Context.CropFields
-                .FirstOrDefaultAsync(cf => cf.Id == id);
+                .Include(cf => cf.Field)
+                .FirstOrDefaultAsync(cf => cf.Id == id && !cf.Deleted);
         }
 
         public async Task<CropField?> FindByFieldIdAsync(int fieldId)
         {
             return await Context.CropFields
-                .FirstOrDefaultAsync(cf => cf.FieldId == fieldId);
+                .Include(cf => cf.Field)
+                .FirstOrDefaultAsync(cf => cf.FieldId == fieldId && !cf.Deleted);
         }
 
-        public async Task AddAsync(CropField cropField)
+        public async Task<CropField?> FindAnyByFieldIdAsync(int fieldId)
+        {
+            return await Context.CropFields
+                .Include(cf => cf.Field)
+                .FirstOrDefaultAsync(cf => cf.FieldId == fieldId); // incluye borrados
+        }
+
+        public new async Task AddAsync(CropField cropField)
         {
             await Context.CropFields.AddAsync(cropField);
         }
 
-        public void Update(CropField cropField)
+        public new void Update(CropField cropField)
         {
             Context.CropFields.Update(cropField);
         }
@@ -50,4 +64,3 @@ namespace FruTech.Backend.API.CropFields.Infrastructure.Persistence.EFC.Reposito
         }
     }
 }
-

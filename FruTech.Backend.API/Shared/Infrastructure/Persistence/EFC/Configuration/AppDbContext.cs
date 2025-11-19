@@ -89,8 +89,8 @@ namespace FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Configuratio
             builder.Entity<Field>().Property(f => f.Name).IsRequired().HasMaxLength(200);
             builder.Entity<Field>().Property(f => f.Location).HasMaxLength(300);
             builder.Entity<Field>().Property(f => f.FieldSize).HasMaxLength(50);
-            // Image storage (BLOB + content type)
-            builder.Entity<Field>().Property(f => f.ImageContent).HasColumnType("LONGBLOB");
+            // Image storage (BLOB + content type) - ensure correct column type
+            builder.Entity<Field>().Property(f => f.ImageContent).HasColumnType("longblob");
             builder.Entity<Field>().Property(f => f.ImageContentType).HasMaxLength(100);
 
             // Relación User 1:N Fields
@@ -117,10 +117,10 @@ namespace FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Configuratio
                 .IsRequired()
                 .HasMaxLength(50);
 
-            // Relación Field 1:1 CropField usando navegación Field.CropField
+            // Relación Field 1:1 CropField usando navegación Field.CropField y CropField.Field
             builder.Entity<Field>()
                 .HasOne(f => f.CropField)
-                .WithOne()
+                .WithOne(cf => cf.Field)
                 .HasForeignKey<CropField>(c => c.FieldId)
                 .OnDelete(DeleteBehavior.Cascade);
 

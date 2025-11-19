@@ -7,10 +7,11 @@ namespace FruTech.Backend.API.CropFields.Domain.Model.Repositories
     {
         Task<IEnumerable<CropField>> GetAllAsync();
         Task<CropField?> GetByIdAsync(int id);
-        Task<CropField?> FindByIdAsync(int id);
+        new Task<CropField?> FindByIdAsync(int id);
         Task<CropField?> FindByFieldIdAsync(int fieldId);
-        Task AddAsync(CropField cropField);
-        void Update(CropField cropField);
+        Task<CropField?> FindAnyByFieldIdAsync(int fieldId); // incluye borrados
+        new Task AddAsync(CropField cropField);
+        new void Update(CropField cropField);
         void Delete(CropField cropField);
     }
 }
