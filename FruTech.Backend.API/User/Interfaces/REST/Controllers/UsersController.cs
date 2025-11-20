@@ -1,5 +1,3 @@
-using FruTech.Backend.API.User.Application.Internal.CommandServices;
-using FruTech.Backend.API.User.Application.Internal.QueryServices;
 using FruTech.Backend.API.User.Domain.Model.Commands;
 using FruTech.Backend.API.User.Domain.Model.Queries;
 using FruTech.Backend.API.User.Domain.Services;
@@ -37,7 +35,7 @@ public class UsersController : ControllerBase
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var command = SignUpUserCommandFromResourceAssembler.ToCommandFromResource(resource);
         var user = await _userCommandService.Handle(command);
-        if (user == null) return Conflict("Email already exists");
+        if (user == null) return Conflict("Email or Identificator already exists");
         var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(user);
         return CreatedAtRoute("GetUserById", new { id = userResource.Id }, userResource);
     }

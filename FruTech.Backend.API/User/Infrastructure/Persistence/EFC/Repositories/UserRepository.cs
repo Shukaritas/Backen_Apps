@@ -19,4 +19,9 @@ public class UserRepository : BaseRepository<UserAggregate>, IUserRepository
     {
         return await _context.Set<UserAggregate>().FirstOrDefaultAsync(u => u.Email == email);
     }
+    
+    public async Task<UserAggregate?> FindByIdentificatorAsync(string identificator)
+    {
+        return await _context.Set<UserAggregate>().FirstOrDefaultAsync(u => u.Identificator == identificator);
+    }
 }

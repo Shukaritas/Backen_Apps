@@ -70,6 +70,21 @@ public class TasksController : ControllerBase
     }
 
     /// <summary>
+    /// Gets upcoming tasks for a user ordered by due date ascending and limited by count.
+    /// </summary>
+    /// <param name="userId">User identifier owning the fields</param>
+    /// <param name="count">Max number of tasks to retrieve</param>
+    /// <response code="200">Upcoming tasks retrieved successfully.</response>
+    [HttpGet("user/{userId:int}/upcoming/{count:int}")]
+    public async Task<ActionResult<IEnumerable<TaskResource>>> GetUpcomingTasksByUser(int userId, int count)
+    {
+        var query = new GetUpcomingTasksByUserIdQuery(userId, count);
+        var tasks = await _taskQueryService.Handle(query);
+        var resources = tasks.Select(TaskResourceFromEntityAssembler.ToResourceFromEntity);
+        return Ok(resources);
+    }
+
+    /// <summary>
     /// Creates a new task.
     /// </summary>
     /// <param name="resource">Task data to create.</param>

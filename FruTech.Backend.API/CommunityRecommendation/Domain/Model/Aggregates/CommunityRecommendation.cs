@@ -28,11 +28,20 @@ public partial class CommunityRecommendation
     }
     
     /// <summary>
-    /// Actualiza la recomendación
+    /// Actualiza la recomendación completa (usuario y comentario)
     /// </summary>
     public void Update(string userName, string comment)
     {
         UserName = userName;
         Comment = comment;
+    }
+    
+    /// <summary>
+    /// Actualiza solo el contenido del comentario y refresca la fecha.
+    /// </summary>
+    public void UpdateContent(string comment)
+    {
+        Comment = comment;
+        CommentDate = DateTime.UtcNow; // refresca fecha de edición
     }
 }

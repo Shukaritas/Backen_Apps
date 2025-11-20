@@ -8,4 +8,6 @@ using Model.Aggregates;
 /// </summary>
 public interface ICommunityRecommendationRepository : IBaseRepository<CommunityRecommendation>
 {
+    // New: update author name in all recommendations with oldUserName
+    Task UpdateAuthorNameAsync(string oldUserName, string newUserName);
 }

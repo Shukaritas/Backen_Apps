@@ -3,6 +3,7 @@ using FruTech.Backend.API.User.Domain.Model.Commands;
 using FruTech.Backend.API.User.Domain.Repositories;
 using FruTech.Backend.API.User.Domain.Services;
 using UserAggregate = FruTech.Backend.API.User.Domain.Model.Aggregates.User;
+using FruTech.Backend.API.CommunityRecommendation.Domain.Repositories; // new using
 
 namespace FruTech.Backend.API.User.Application.Internal.CommandServices;
 
@@ -10,18 +11,23 @@ public class UserCommandService : IUserCommandService
 {
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICommunityRecommendationRepository _communityRecommendationRepository; // new field
 
-    public UserCommandService(IUserRepository userRepository, IUnitOfWork unitOfWork)
+    public UserCommandService(IUserRepository userRepository, IUnitOfWork unitOfWork, ICommunityRecommendationRepository communityRecommendationRepository)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _communityRecommendationRepository = communityRecommendationRepository; // assign
     }
 
     public async Task<UserAggregate?> Handle(SignUpUserCommand command)
     {
-        // Verificar duplicado
+        // Verificar duplicado de email
         var existing = await _userRepository.FindByEmailAsync(command.Email);
-        if (existing != null) return null; // o lanzar excepción personalizada
+        if (existing != null) return null; // conflicto email
+        // Verificar duplicado de identificator (DNI)
+        var existingId = await _userRepository.FindByIdentificatorAsync(command.Identificator);
+        if (existingId != null) return null; // conflicto identificator
 
         var user = new UserAggregate(command.UserName, command.Email, command.PhoneNumber, command.Identificator);
         user.HashPassword(command.Password);
@@ -50,8 +56,16 @@ public class UserCommandService : IUserCommandService
         var emailOwner = await _userRepository.FindByEmailAsync(command.Email);
         if (emailOwner != null && emailOwner.Id != user.Id) return null; // Indica conflicto
 
+        var oldUserName = user.UserName; // capture current name
+
         user.UpdateProfile(command.UserName, command.Email, command.PhoneNumber);
         _userRepository.Update(user);
+
+        if (!string.Equals(oldUserName, command.UserName, StringComparison.Ordinal))
+        {
+            await _communityRecommendationRepository.UpdateAuthorNameAsync(oldUserName, command.UserName);
+        }
+
         await _unitOfWork.CompleteAsync();
         return user;
     }

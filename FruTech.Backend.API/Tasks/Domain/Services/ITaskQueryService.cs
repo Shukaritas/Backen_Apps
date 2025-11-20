@@ -7,5 +7,5 @@ public interface ITaskQueryService
     Task<IEnumerable<Model.Aggregate.Task>> Handle(GetAllTasksQuery query);
     Task<Model.Aggregate.Task?> Handle(GetTaskByIdQuery query);
     Task<IEnumerable<Model.Aggregate.Task>> Handle(GetTasksByFieldQuery query);
+    Task<IEnumerable<Model.Aggregate.Task>> Handle(GetUpcomingTasksByUserIdQuery query);
 }
-
