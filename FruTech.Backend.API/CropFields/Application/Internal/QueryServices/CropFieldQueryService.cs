@@ -1,4 +1,4 @@
-﻿using FruTech.Backend.API.CropFields.Domain.Model.Entities;
+﻿﻿using FruTech.Backend.API.CropFields.Domain.Model.Entities;
 using FruTech.Backend.API.CropFields.Domain.Model.Queries;
 using FruTech.Backend.API.CropFields.Domain.Model.Repositories;
 using FruTech.Backend.API.CropFields.Domain.Services;
@@ -27,5 +27,10 @@ public class CropFieldQueryService : ICropFieldQueryService
     public async Task<CropField?> Handle(GetCropFieldByFieldIdQuery query)
     {
         return await _cropFieldRepository.FindByFieldIdAsync(query.FieldId);
+    }
+
+    public async Task<IEnumerable<CropField>> Handle(GetCropFieldsByUserIdQuery query)
+    {
+        return await _cropFieldRepository.GetByUserIdAsync(query.UserId);
     }
 }

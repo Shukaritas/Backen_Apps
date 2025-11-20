@@ -48,6 +48,14 @@ namespace FruTech.Backend.API.CropFields.Infrastructure.Persistence.EFC.Reposito
                 .FirstOrDefaultAsync(cf => cf.FieldId == fieldId); // incluye borrados
         }
 
+        public async Task<IEnumerable<CropField>> GetByUserIdAsync(int userId)
+        {
+            return await Context.CropFields
+                .Include(x => x.Field)
+                .Where(x => x.Field != null && x.Field.UserId == userId && !x.Deleted)
+                .ToListAsync();
+        }
+
         public new async Task AddAsync(CropField cropField)
         {
             await Context.CropFields.AddAsync(cropField);

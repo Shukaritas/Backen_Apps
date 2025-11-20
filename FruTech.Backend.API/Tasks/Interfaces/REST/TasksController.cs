@@ -70,6 +70,20 @@ public class TasksController : ControllerBase
     }
 
     /// <summary>
+    /// Gets all tasks associated with a specific user (through their fields).
+    /// </summary>
+    /// <param name="userId">User identifier owning the fields</param>
+    /// <response code="200">List of tasks for the user retrieved successfully.</response>
+    [HttpGet("user/{userId:int}")]
+    public async Task<ActionResult<IEnumerable<TaskResource>>> GetTasksByUserId(int userId)
+    {
+        var query = new GetTasksByUserIdQuery(userId);
+        var tasks = await _taskQueryService.Handle(query);
+        var resources = tasks.Select(TaskResourceFromEntityAssembler.ToResourceFromEntity);
+        return Ok(resources);
+    }
+
+    /// <summary>
     /// Gets upcoming tasks for a user ordered by due date ascending and limited by count.
     /// </summary>
     /// <param name="userId">User identifier owning the fields</param>

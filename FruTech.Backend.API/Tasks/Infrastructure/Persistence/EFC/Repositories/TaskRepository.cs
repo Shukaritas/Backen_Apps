@@ -35,6 +35,14 @@ public class TaskRepository : ITaskRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Domain.Model.Aggregate.Task>> GetByUserIdAsync(int userId)
+    {
+        return await _context.Set<Domain.Model.Aggregate.Task>()
+            .Include(t => t.Field)
+            .Where(t => t.Field != null && t.Field.UserId == userId)
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<Domain.Model.Aggregate.Task>> GetUpcomingTasksByUserIdAsync(int userId, int count)
     {
         var today = DateTime.UtcNow.Date;

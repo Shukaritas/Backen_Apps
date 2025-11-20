@@ -28,6 +28,11 @@ public class TaskQueryService : ITaskQueryService
         return await _taskRepository.GetByFieldIdAsync(query.fieldId);
     }
 
+    public async Task<IEnumerable<Domain.Model.Aggregate.Task>> Handle(GetTasksByUserIdQuery query)
+    {
+        return await _taskRepository.GetByUserIdAsync(query.UserId);
+    }
+
     public async Task<IEnumerable<Domain.Model.Aggregate.Task>> Handle(GetUpcomingTasksByUserIdQuery query)
     {
         return await _taskRepository.GetUpcomingTasksByUserIdAsync(query.UserId, query.Count);

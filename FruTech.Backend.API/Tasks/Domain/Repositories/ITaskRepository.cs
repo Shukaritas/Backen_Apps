@@ -7,6 +7,7 @@ public interface ITaskRepository
     Task<IEnumerable<Model.Aggregate.Task>> GetAllAsync();
     Task<Model.Aggregate.Task?> GetByIdAsync(int id);
     Task<IEnumerable<Model.Aggregate.Task>> GetByFieldIdAsync(int fieldId);
+    Task<IEnumerable<Model.Aggregate.Task>> GetByUserIdAsync(int userId);
     Task<Model.Aggregate.Task> CreateAsync(Model.Aggregate.Task task);
     Task<Model.Aggregate.Task?> UpdateAsync(int id, Model.Aggregate.Task task);
     Task<bool> DeleteAsync(int id);

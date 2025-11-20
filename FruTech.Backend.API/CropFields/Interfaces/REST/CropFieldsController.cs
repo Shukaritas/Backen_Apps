@@ -90,6 +90,19 @@ public class CropFieldsController : ControllerBase
     }
 
     /// <summary>
+    /// Gets all CropFields associated with a specific user
+    /// </summary>
+    /// <param name="userId">User ID</param>
+    /// <response code="200">List of CropFields for the user</response>
+    [HttpGet("user/{userId:int}")]
+    public async Task<IActionResult> GetCropFieldsByUserId(int userId)
+    {
+        var cropFields = await _queryService.Handle(new GetCropFieldsByUserIdQuery(userId));
+        var resources = cropFields.Select(CropFieldResourceFromEntityAssembler.ToResource);
+        return Ok(resources);
+    }
+
+    /// <summary>
     /// Updates attributes of a CropField (supports partial updates): Crop, PlantingDate, HarvestDate, Status. IDs and audit fields cannot be modified.
     /// </summary>
     /// <param name="id">CropField ID</param>
