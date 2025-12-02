@@ -3,5 +3,6 @@
 /// <summary>
 /// Comando para actualizar la fecha de fertilizado en ProgressHistory
 /// </summary>
+/// HOLA
 public record UpdateFertilizedCommand(int FieldId, DateTime Fertilized);
 
