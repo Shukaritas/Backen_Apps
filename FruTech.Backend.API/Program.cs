@@ -28,6 +28,8 @@ using FruTech.Backend.API.Fields.Application.Internal.QueryServices;
 using FruTech.Backend.API.CropFields.Domain.Services;
 using FruTech.Backend.API.CropFields.Application.Internal.CommandServices;
 using FruTech.Backend.API.CropFields.Application.Internal.QueryServices;
+using FruTech.Backend.API.Shared.Domain.Services;
+using FruTech.Backend.API.Shared.Infrastructure.Services;
 using Cortex.Mediator;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -78,6 +80,9 @@ builder.Services.AddScoped<ITaskCommandService, TaskCommandService>();
 builder.Services.AddScoped<ITaskQueryService, TaskQueryService>();
 builder.Services.AddScoped<ICommunityRecommendationCommandService, CommunityRecommendationCommandService>();
 builder.Services.AddScoped<ICommunityRecommendationQueryService, CommunityRecommendationQueryService>();
+
+// HttpClient for GeoLocation Service
+builder.Services.AddHttpClient<IGeoLocationService, GeoLocationService>();
 
 // Mediator
 builder.Services.AddScoped<IMediator, Mediator>();
