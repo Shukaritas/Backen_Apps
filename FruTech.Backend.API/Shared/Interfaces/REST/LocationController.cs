@@ -22,7 +22,7 @@ public class LocationController : ControllerBase
     /// <summary>
     /// Gets the user's location based on their IP address
     /// </summary>
-    /// <returns>JSON object with region and country</returns>
+    /// <returns>JSON object with ip, city, region_name and country_name</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -30,9 +30,27 @@ public class LocationController : ControllerBase
     {
         try
         {
-            // Obtener la IP real del usuario
-            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-            _logger.LogInformation("Client IP detected: {IpAddress}", ipAddress);
+            // Detección de IP Real (Prioridad Producción)
+            string? ipAddress = null;
+            
+            // Primero, verificar el header X-Forwarded-For
+            if (HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
+            {
+                // Tomar la primera IP de la lista (IP real del cliente)
+                var forwardedIps = forwardedFor.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries);
+                if (forwardedIps.Length > 0)
+                {
+                    ipAddress = forwardedIps[0].Trim();
+                    _logger.LogInformation("IP detected from X-Forwarded-For header: {IpAddress}", ipAddress);
+                }
+            }
+            
+            // Si no existe el header, usar RemoteIpAddress
+            if (string.IsNullOrEmpty(ipAddress))
+            {
+                ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                _logger.LogInformation("IP detected from RemoteIpAddress: {IpAddress}", ipAddress);
+            }
 
             if (string.IsNullOrEmpty(ipAddress))
             {
@@ -47,11 +65,13 @@ public class LocationController : ControllerBase
                 return StatusCode(500, new { error = "Unable to retrieve location information" });
             }
 
-            // Devolver un objeto JSON simple con región y país
+            // Devolver el formato exacto solicitado: { ip, city, region_name, country_name }
             return Ok(new
             {
-                region = locationData.Region_Name ?? "Unknown",
-                country = locationData.Country_Name ?? "Unknown"
+                ip = locationData.Ip ?? ipAddress,
+                city = locationData.City ?? "Unknown",
+                region_name = locationData.Region_Name ?? "Unknown",
+                country_name = locationData.Country_Name ?? "Unknown"
             });
         }
         catch (Exception ex)
