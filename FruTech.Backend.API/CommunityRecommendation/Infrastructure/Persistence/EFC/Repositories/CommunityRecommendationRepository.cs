@@ -12,6 +12,11 @@ public class CommunityRecommendationRepository(AppDbContext context)
     : BaseRepository<Domain.Model.Aggregates.CommunityRecommendation>(context),
         Domain.Repositories.ICommunityRecommendationRepository
 {
+    /// <summary>
+    ///  Updates the author name in all community recommendations.
+    /// </summary>
+    /// <param name="oldUserName"></param>
+    /// <param name="newUserName"></param>
     public async Task UpdateAuthorNameAsync(string oldUserName, string newUserName)
     {
         if (string.IsNullOrWhiteSpace(oldUserName) || string.IsNullOrWhiteSpace(newUserName) || oldUserName == newUserName)
@@ -24,6 +29,5 @@ public class CommunityRecommendationRepository(AppDbContext context)
         {
             r.UserName = newUserName;
         }
-        // Do not call SaveChangesAsync here; UnitOfWork will persist.
     }
 }

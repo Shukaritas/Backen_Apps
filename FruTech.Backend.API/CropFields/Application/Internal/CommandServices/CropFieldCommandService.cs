@@ -7,22 +7,34 @@ using FruTech.Backend.API.Fields.Domain.Model.Repositories;
 
 namespace FruTech.Backend.API.CropFields.Application.Internal.CommandServices;
 
+/// <summary>
+///  Implementation of the command service for managing CropField entities.
+/// </summary>
 public class CropFieldCommandService : ICropFieldCommandService
 {
     private readonly ICropFieldRepository _cropFieldRepository;
     private readonly IFieldRepository _fieldRepository;
     private readonly IUnitOfWork _unitOfWork;
-
+    /// <summary>
+    ///  Initializes a new instance of the <see cref="CropFieldCommandService"/> class.
+    /// </summary>
+    /// <param name="cropFieldRepository"></param>
+    /// <param name="fieldRepository"></param>
+    /// <param name="unitOfWork"></param>
     public CropFieldCommandService(ICropFieldRepository cropFieldRepository, IFieldRepository fieldRepository, IUnitOfWork unitOfWork)
     {
         _cropFieldRepository = cropFieldRepository;
         _fieldRepository = fieldRepository;
         _unitOfWork = unitOfWork;
     }
-
+    /// <summary>
+    ///  Handles the creation of a new CropField.
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<CropField> Handle(CreateCropFieldCommand command)
     {
-        // Buscar cualquier CropField para ese FieldId (incluye borrados)
         var existing = await _cropFieldRepository.FindAnyByFieldIdAsync(command.FieldId);
         if (existing != null)
         {
@@ -31,7 +43,7 @@ public class CropFieldCommandService : ICropFieldCommandService
                 throw new InvalidOperationException($"El Field con ID {command.FieldId} ya tiene un CropField activo.");
             }
 
-            // Resurrección: reutilizar la entidad borrada
+
             existing.Crop = command.Crop;
             existing.SoilType = command.SoilType;
             existing.Sunlight = command.Sunlight;
@@ -45,8 +57,7 @@ public class CropFieldCommandService : ICropFieldCommandService
 
             _cropFieldRepository.Update(existing);
             await _unitOfWork.CompleteAsync();
-
-            // Asegurar que Field apunte al CropField resucitado
+            
             var field = await _fieldRepository.FindByIdAsync(command.FieldId);
             if (field != null)
             {
@@ -57,8 +68,7 @@ public class CropFieldCommandService : ICropFieldCommandService
 
             return existing;
         }
-
-        // No existe: crear nuevo
+        
         var cropField = new CropField
         {
             FieldId = command.FieldId,
@@ -73,8 +83,7 @@ public class CropFieldCommandService : ICropFieldCommandService
 
         await _cropFieldRepository.AddAsync(cropField);
         await _unitOfWork.CompleteAsync();
-
-        // Actualizar Field.CropFieldId
+        
         var fieldNew = await _fieldRepository.FindByIdAsync(command.FieldId);
         if (fieldNew != null)
         {
@@ -85,7 +94,12 @@ public class CropFieldCommandService : ICropFieldCommandService
 
         return cropField;
     }
-
+    /// <summary>
+    ///  Handles the update of an existing CropField.
+    /// </summary>
+    /// <param name="cropFieldId"></param>
+    /// <param name="command"></param>
+    /// <returns></returns>
     public async Task<CropField?> Handle(int cropFieldId, UpdateCropFieldCommand command)
     {
         var cropField = await _cropFieldRepository.FindByIdAsync(cropFieldId);
@@ -105,13 +119,16 @@ public class CropFieldCommandService : ICropFieldCommandService
         await _unitOfWork.CompleteAsync();
         return cropField;
     }
-
+    /// <summary>
+    ///  Handles the deletion of a CropField (soft delete).
+    /// </summary>
+    /// <param name="cropFieldId"></param>
+    /// <returns></returns>
     public async Task<CropField?> HandleDelete(int cropFieldId)
     {
         var cropField = await _cropFieldRepository.FindByIdAsync(cropFieldId);
         if (cropField == null) return null;
-
-        // Soft-delete: marcar como borrado y guardar la fecha
+        
         cropField.Deleted = true;
         cropField.DeletedDate = DateTimeOffset.UtcNow;
         cropField.UpdatedDate = DateTimeOffset.UtcNow;

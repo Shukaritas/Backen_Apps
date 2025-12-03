@@ -12,7 +12,7 @@ public class GeoLocationService : IGeoLocationService
     private readonly HttpClient _httpClient;
     private readonly ILogger<GeoLocationService> _logger;
     private const string AccessKey = "fa7cfc7586d347d5f8338192c1960405";
-    private const string TestIp = "161.185.160.93"; // IP de prueba para desarrollo local
+    private const string TestIp = "161.185.160.93"; 
 
     public GeoLocationService(HttpClient httpClient, ILogger<GeoLocationService> logger)
     {
@@ -29,7 +29,6 @@ public class GeoLocationService : IGeoLocationService
     {
         try
         {
-            // Si la IP es localhost o IPv6 loopback, usar IP de prueba
             if (string.IsNullOrEmpty(ip) || ip == "::1" || ip == "127.0.0.1" || ip.Contains("localhost"))
             {
                 _logger.LogInformation("Local IP detected ({Ip}), using test IP: {TestIp}", ip, TestIp);

@@ -58,22 +58,19 @@ namespace FruTech.Backend.API.Fields.Interfaces.REST
         {
             var scope = HttpContext.RequestServices.CreateScope();
             var db = scope.ServiceProvider.GetService<FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Configuration.AppDbContext>();
-
-            // If FieldId is 0 or not specified, search for the last created Field
+            
             if (progressHistory.FieldId <= 0 && db != null)
             {
                 var lastField = await db.Fields.OrderByDescending(f => f.Id).FirstOrDefaultAsync();
                 if (lastField != null)
                 {
-                    progressHistory.FieldId = lastField.Id; // Automatically assign the last Field
+                    progressHistory.FieldId = lastField.Id; 
                 }
             }
 
             await _progressRepo.AddAsync(progressHistory);
             await _unitOfWork.CompleteAsync();
-
-            // Removed: assignment of nonexistent ProgressHistoryId. The relationship is resolved by FieldId in ProgressHistory.
-
+            
             return CreatedAtAction(nameof(GetById), new { id = progressHistory.Id }, progressHistory);
         }
 
@@ -89,8 +86,7 @@ namespace FruTech.Backend.API.Fields.Interfaces.REST
         {
             var existing = await _progressRepo.GetByIdAsync(id);
             if (existing == null) return NotFound();
-
-            // Only allow these fields to change
+            
             existing.Watered = resource.Watered;
             existing.Fertilized = resource.Fertilized;
             existing.Pests = resource.Pests;

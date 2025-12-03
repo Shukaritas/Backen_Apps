@@ -34,7 +34,7 @@ using Cortex.Mediator;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS Configuration
+
 const string FrontendCorsPolicy = "FrontendCorsPolicy";
 builder.Services.AddCors(options =>
 {
@@ -46,7 +46,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// DbContext MySQL
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection") 
@@ -58,10 +58,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
-// Unit of Work
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-// Repositories
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFieldRepository, FieldRepository>();
 builder.Services.AddScoped<IProgressHistoryRepository, ProgressHistoryRepository>();
@@ -69,7 +69,7 @@ builder.Services.AddScoped<ICropFieldRepository, CropFieldRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<ICommunityRecommendationRepository, CommunityRecommendationRepository>();
 
-// Services (Command & Query)
+
 builder.Services.AddScoped<IUserCommandService, UserCommandService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IFieldCommandService, FieldCommandService>();
@@ -81,13 +81,13 @@ builder.Services.AddScoped<ITaskQueryService, TaskQueryService>();
 builder.Services.AddScoped<ICommunityRecommendationCommandService, CommunityRecommendationCommandService>();
 builder.Services.AddScoped<ICommunityRecommendationQueryService, CommunityRecommendationQueryService>();
 
-// HttpClient for GeoLocation Service
+
 builder.Services.AddHttpClient<IGeoLocationService, GeoLocationService>();
 
-// Mediator
+
 builder.Services.AddScoped<IMediator, Mediator>();
 
-// Controllers / OpenAPI
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -112,17 +112,9 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// DEVELOPMENT ONLY: optional cleanup of obsolete tables before EnsureCreated.
-// Uncomment if you need to force recreation (will DROP data!).
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    // Example (commented):
-    // dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS fields;");
-    // dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS crop_fields;");
-    // dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS progress_histories;");
-    // dbContext.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS tasks;");
-    // After dropping, recreate schema
     dbContext.Database.EnsureCreated();
 }
 

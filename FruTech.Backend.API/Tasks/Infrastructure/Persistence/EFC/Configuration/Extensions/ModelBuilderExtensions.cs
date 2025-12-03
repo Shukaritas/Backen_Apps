@@ -1,9 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace FruTech.Backend.API.Tasks.Infrastructure.Persistence.EFC.Configuration.Extensions;
-
+/// <summary>
+///  Extension methods for configuring the Task entity in the ModelBuilder.
+/// </summary>
 public static class ModelBuilderExtensions
 {
+    /// <summary>
+    ///  Configures the Task entity in the ModelBuilder.
+    /// </summary>
+    /// <param name="builder"></param>
     public static void ApplyTaskConfiguration(this ModelBuilder builder)
     {
         builder.Entity<Domain.Model.Aggregate.Task>(entity =>

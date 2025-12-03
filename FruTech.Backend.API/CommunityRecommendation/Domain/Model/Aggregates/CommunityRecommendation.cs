@@ -19,7 +19,11 @@ public partial class CommunityRecommendation
     public string Comment { get; set; } = string.Empty;
     
     public CommunityRecommendation() { }
-    
+    /// <summary>
+    ///  Constructor de la recomendación
+    /// </summary>
+    /// <param name="userName"></param>
+    /// <param name="comment"></param>
     public CommunityRecommendation(string userName, string comment)
     {
         UserName = userName;

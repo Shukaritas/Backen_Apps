@@ -17,15 +17,21 @@ namespace FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Repositories
 public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
 {
     protected readonly AppDbContext Context;
-
+    /// <summary>
+    ///   Constructor
+    /// </summary>
+    /// <param name="context"></param>
     protected BaseRepository(AppDbContext context)
     {
         Context = context;
     }
-    
+    /// <summary>
+    ///  Adds a new entity to the repository
+    /// </summary>
+    /// <param name="entity"></param>
     public async Task AddAsync(TEntity entity)
     {
-        // If entity supports audit timestamps, set them as a safety net before adding
+
         if (entity is IEntityWithCreatedUpdatedDate auditable)
         {
             var now = DateTimeOffset.Now;
@@ -35,22 +41,34 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
         await Context.Set<TEntity>().AddAsync(entity);
     }
-
+    /// <summary>
+    ///  Updates an existing entity in the repository
+    /// </summary>
+    /// <param name="entity"></param>
     public void Update(TEntity entity)
     {
         Context.Set<TEntity>().Update(entity);
     }
-
+    /// <summary>
+    ///  Removes an entity from the repository
+    /// </summary>
+    /// <param name="entity"></param>
     public void Remove(TEntity entity)
     {
         Context.Set<TEntity>().Remove(entity);
     }
-
+    /// <summary>
+    ///  Finds an entity by its ID
+    /// </summary>
+    /// <param name="id"></param>
     public async Task<TEntity?> FindByIdAsync(int id)
     {
         return await Context.Set<TEntity>().FindAsync(id);
     }
-
+    /// <summary>
+    ///  Lists all entities in the repository
+    /// </summary>
+    /// <returns></returns>
     public async Task<IEnumerable<TEntity>> ListAsync()
     {
         return await Context.Set<TEntity>().ToListAsync();

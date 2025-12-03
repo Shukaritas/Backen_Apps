@@ -30,13 +30,10 @@ public class LocationController : ControllerBase
     {
         try
         {
-            // Detección de IP Real (Prioridad Producción)
             string? ipAddress = null;
             
-            // Primero, verificar el header X-Forwarded-For
             if (HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
             {
-                // Tomar la primera IP de la lista (IP real del cliente)
                 var forwardedIps = forwardedFor.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries);
                 if (forwardedIps.Length > 0)
                 {
@@ -45,7 +42,6 @@ public class LocationController : ControllerBase
                 }
             }
             
-            // Si no existe el header, usar RemoteIpAddress
             if (string.IsNullOrEmpty(ipAddress))
             {
                 ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -57,15 +53,12 @@ public class LocationController : ControllerBase
                 return StatusCode(500, new { error = "Unable to determine IP address" });
             }
 
-            // Obtener la información de geolocalización
             var locationData = await _geoLocationService.GetLocationAsync(ipAddress);
 
             if (locationData == null)
             {
                 return StatusCode(500, new { error = "Unable to retrieve location information" });
             }
-
-            // Devolver el formato exacto solicitado: { ip, city, region_name, country_name }
             return Ok(new
             {
                 ip = locationData.Ip ?? ipAddress,

@@ -1,7 +1,9 @@
 using FruTech.Backend.API.Tasks.Domain.Model.Queries;
 
 namespace FruTech.Backend.API.Tasks.Domain.Services;
-
+/// <summary>
+///  Service interface for handling Task queries.
+/// </summary>
 public interface ITaskQueryService
 {
     Task<IEnumerable<Model.Aggregate.Task>> Handle(GetAllTasksQuery query);

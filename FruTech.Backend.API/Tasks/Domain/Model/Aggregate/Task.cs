@@ -20,7 +20,7 @@ public partial class Task
     [JsonPropertyName("due_date")]
     public DateTime DueDate { get; set; } = DateTime.UtcNow.Date;
     
-    // Navigation property
+
     [JsonIgnore]
     public Field? Field { get; set; }
     

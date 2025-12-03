@@ -17,7 +17,11 @@ public class FieldsController : ControllerBase
 {
     private readonly IFieldCommandService _fieldCommandService;
     private readonly IFieldQueryService _fieldQueryService;
-
+    /// <summary>
+    ///  Constructor for FieldsController
+    /// </summary>
+    /// <param name="fieldCommandService"></param>
+    /// <param name="fieldQueryService"></param>
     public FieldsController(
         IFieldCommandService fieldCommandService,
         IFieldQueryService fieldQueryService)
@@ -25,7 +29,9 @@ public class FieldsController : ControllerBase
         _fieldCommandService = fieldCommandService;
         _fieldQueryService = fieldQueryService;
     }
-
+    /// <summary>
+    ///  Request model for creating a new field
+    /// </summary>
     public class CreateFieldRequest
     {
         public int UserId { get; set; }

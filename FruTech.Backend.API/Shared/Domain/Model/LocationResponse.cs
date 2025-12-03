@@ -1,4 +1,4 @@
-﻿﻿namespace FruTech.Backend.API.Shared.Domain.Model;
+﻿namespace FruTech.Backend.API.Shared.Domain.Model;
 
 /// <summary>
 /// Response from ipapi.com geolocation API

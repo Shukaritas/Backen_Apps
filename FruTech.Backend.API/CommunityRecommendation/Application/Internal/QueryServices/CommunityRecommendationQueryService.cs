@@ -10,11 +10,21 @@ namespace FruTech.Backend.API.CommunityRecommendation.Application.Internal.Query
 public class CommunityRecommendationQueryService(ICommunityRecommendationRepository communityRecommendationRepository)
     : ICommunityRecommendationQueryService
 {
+    /// <summary>
+    ///  Get all Community Recommendations
+    /// </summary>
+    /// <param name="query"></param>
+    /// <returns></returns>
     public async Task<IEnumerable<Domain.Model.Aggregates.CommunityRecommendation>> Handle(GetAllCommunityRecommendationsQuery query)
     {
         return await communityRecommendationRepository.ListAsync();
     }
 
+    /// <summary>
+    ///  Get Community Recommendation by Id
+    /// </summary>
+    /// <param name="query"></param>
+    /// <returns></returns>
     public async Task<Domain.Model.Aggregates.CommunityRecommendation?> Handle(GetCommunityRecommendationByIdQuery query)
     {
         return await communityRecommendationRepository.FindByIdAsync(query.RecomendationId);

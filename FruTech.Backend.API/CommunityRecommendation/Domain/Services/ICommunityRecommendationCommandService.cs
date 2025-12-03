@@ -9,6 +9,5 @@ public interface ICommunityRecommendationCommandService
 {
     Task<Model.Aggregates.CommunityRecommendation?> Handle(UpdateCommunityRecommendationCommand command);
     Task<Model.Aggregates.CommunityRecommendation> Handle(CreateCommunityRecommendationCommand command);
-    // Nuevo: actualizar solo contenido
     Task<Model.Aggregates.CommunityRecommendation?> HandleUpdateContent(int id, string newComment);
 }

@@ -11,23 +11,35 @@ namespace FruTech.Backend.API.Fields.Application.Internal.QueryServices;
 /// </summary>
 public class FieldQueryService : IFieldQueryService
 {
+    /// <summary>
+    ///  Field repository
+    /// </summary>
     private readonly IFieldRepository _fieldRepository;
-
+    /// <summary>
+    ///  Constructor
+    /// </summary>
+    /// <param name="fieldRepository"></param>
     public FieldQueryService(IFieldRepository fieldRepository)
     {
         _fieldRepository = fieldRepository;
     }
-
+    /// <summary>
+    ///  Gets fields by user id
+    /// </summary>
+    /// <param name="query"></param>
+    /// <returns></returns>
     public async Task<IEnumerable<FieldResource>> Handle(GetFieldsByUserIdQuery query)
     {
-        // Repository already includes CropField, ProgressHistory, Tasks
         var fields = await _fieldRepository.FindByUserIdAsync(query.UserId);
         return fields.Select(f => FieldResourceFromEntityAssembler.ToResource(f));
     }
-
+    /// <summary>
+    ///  Gets field by id
+    /// </summary>
+    /// <param name="query"></param>
+    /// <returns></returns>
     public async Task<FieldResource?> Handle(GetFieldByIdQuery query)
     {
-        // Repository includes related entities
         var field = await _fieldRepository.FindByIdAsync(query.FieldId);
         if (field is null) return null;
 

@@ -1,4 +1,4 @@
-﻿﻿﻿using FruTech.Backend.API.Tasks.Interfaces.REST.Resources;
+﻿using FruTech.Backend.API.Tasks.Interfaces.REST.Resources;
 
 namespace FruTech.Backend.API.Fields.Interfaces.REST.Resources;
 

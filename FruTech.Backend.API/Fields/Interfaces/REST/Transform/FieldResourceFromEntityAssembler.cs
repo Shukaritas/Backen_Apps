@@ -1,4 +1,4 @@
-﻿﻿using FruTech.Backend.API.Fields.Domain.Model.Entities;
+﻿using FruTech.Backend.API.Fields.Domain.Model.Entities;
 using FruTech.Backend.API.Fields.Interfaces.REST.Resources;
 using FruTech.Backend.API.Tasks.Interfaces.REST.Transform;
 using FruTech.Backend.API.Tasks.Interfaces.REST.Resources;
@@ -7,6 +7,10 @@ namespace FruTech.Backend.API.Fields.Interfaces.REST.Transform;
 
 public static class FieldResourceFromEntityAssembler
 {
+    /// <summary>
+    ///  Maps a Field entity to a FieldResource.
+    /// </summary>
+    /// <param name="entity"></param>
     public static FieldResource ToResource(Field entity)
     {
         var progressHistoryId = entity.ProgressHistory?.Id;
@@ -14,7 +18,6 @@ public static class FieldResourceFromEntityAssembler
 
         var imageUrl = BuildImageUrl(entity);
         
-        // Map ProgressHistory data if available
         ProgressHistoryResource? progressHistoryResource = null;
         if (entity.ProgressHistory != null)
         {
@@ -25,11 +28,8 @@ public static class FieldResourceFromEntityAssembler
                 entity.ProgressHistory.Pests
             );
         }
-        
-        // Check if CropField exists and is not soft-deleted
         var hasCropField = entity.CropField != null && !entity.CropField.Deleted;
         
-        // Extract crop data only if CropField is not deleted
         var cropFieldId = hasCropField ? entity.CropField?.Id : null;
         var cropName = hasCropField ? entity.CropField?.Crop ?? string.Empty : string.Empty;
         var soilType = hasCropField ? entity.CropField?.SoilType ?? string.Empty : string.Empty;
@@ -63,7 +63,10 @@ public static class FieldResourceFromEntityAssembler
             cropStatus
         );
     }
-
+    /// <summary>
+    ///  Builds a data URL for the image content of the Field entity.
+    /// </summary>
+    /// <param name="entity"></param>
     private static string BuildImageUrl(Field entity)
     {
         if (entity.ImageContent != null && entity.ImageContent.Length > 0)

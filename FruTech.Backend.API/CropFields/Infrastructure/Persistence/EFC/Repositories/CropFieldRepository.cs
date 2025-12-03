@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FruTech.Backend.API.CropFields.Infrastructure.Persistence.EFC.Repositories
 {
+    /// <summary>
+    ///  Repository for managing CropField entities using Entity Framework Core.
+    /// </summary>
     public class CropFieldRepository : BaseRepository<CropField>, ICropFieldRepository
     {
         public CropFieldRepository(AppDbContext context) : base(context)

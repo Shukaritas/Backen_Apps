@@ -1,7 +1,9 @@
 using FruTech.Backend.API.Tasks.Domain.Model.Aggregate;
 
 namespace FruTech.Backend.API.Tasks.Domain.Repositories;
-
+/// <summary>
+///  Repository interface for managing Task entities.
+/// </summary>
 public interface ITaskRepository
 {
     Task<IEnumerable<Model.Aggregate.Task>> GetAllAsync();
