@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
 using UserAggregate = FruTech.Backend.API.User.Domain.Model.Aggregates.User;
 using CommunityRecommendationAggregate = FruTech.Backend.API.CommunityRecommendation.Domain.Model.Aggregates.CommunityRecommendation;
+using RoleEntity = FruTech.Backend.API.User.Domain.Model.Entities.Role;
 
 namespace FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Configuration
 {
@@ -16,6 +17,7 @@ namespace FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Configuratio
     public class AppDbContext : DbContext
     {
         public DbSet<UserAggregate> Users { get; set; }
+        public DbSet<RoleEntity> Roles { get; set; }
         public DbSet<CommunityRecommendationAggregate> CommunityRecommendations { get; set; }
         public DbSet<CropField> CropFields { get; set; }
         public DbSet<Field> Fields { get; set; }
@@ -83,6 +85,28 @@ namespace FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Configuratio
             builder.Entity<UserAggregate>().Property(u => u.PasswordHash).IsRequired();
             builder.Entity<UserAggregate>().HasIndex(u => u.Email).IsUnique();
             builder.Entity<UserAggregate>().HasIndex(u => u.Identificator).IsUnique();
+            
+            // Configuración de Role
+            builder.Entity<RoleEntity>().ToTable("roles");
+            builder.Entity<RoleEntity>().HasKey(r => r.Id);
+            builder.Entity<RoleEntity>().Property(r => r.Id).ValueGeneratedOnAdd();
+            builder.Entity<RoleEntity>().Property(r => r.Name).IsRequired().HasMaxLength(100);
+            
+            // Relación muchos a muchos User-Role con tabla intermedia user_roles
+            builder.Entity<UserAggregate>()
+                .HasMany(u => u.Roles)
+                .WithMany(r => r.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "user_roles",
+                    j => j.HasOne<RoleEntity>().WithMany().HasForeignKey("role_id").OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne<UserAggregate>().WithMany().HasForeignKey("user_id").OnDelete(DeleteBehavior.Cascade)
+                );
+            
+            // Data Seeding - Pre-cargar roles
+            builder.Entity<RoleEntity>().HasData(
+                new RoleEntity { Id = 1, Name = "Agricultor Novato" },
+                new RoleEntity { Id = 2, Name = "Agricultor Experto" }
+            );
             
             builder.Entity<Field>().ToTable("fields");
             builder.Entity<Field>().HasKey(f => f.Id);

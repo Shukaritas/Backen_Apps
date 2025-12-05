@@ -1,5 +1,6 @@
 using FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using FruTech.Backend.API.Shared.Infrastructure.Persistence.EFC.Repositories;
+using FruTech.Backend.API.User.Domain.Model.Entities;
 using FruTech.Backend.API.User.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using UserAggregate = FruTech.Backend.API.User.Domain.Model.Aggregates.User;
@@ -27,7 +28,9 @@ public class UserRepository : BaseRepository<UserAggregate>, IUserRepository
     /// <returns></returns>
     public async Task<UserAggregate?> FindByEmailAsync(string email)
     {
-        return await _context.Set<UserAggregate>().FirstOrDefaultAsync(u => u.Email == email);
+        return await _context.Set<UserAggregate>()
+            .Include(u => u.Roles)
+            .FirstOrDefaultAsync(u => u.Email == email);
     }
     /// <summary>
     ///  Finds a UserAggregate by identificator.
@@ -36,6 +39,29 @@ public class UserRepository : BaseRepository<UserAggregate>, IUserRepository
     /// <returns></returns>
     public async Task<UserAggregate?> FindByIdentificatorAsync(string identificator)
     {
-        return await _context.Set<UserAggregate>().FirstOrDefaultAsync(u => u.Identificator == identificator);
+        return await _context.Set<UserAggregate>()
+            .Include(u => u.Roles)
+            .FirstOrDefaultAsync(u => u.Identificator == identificator);
+    }
+    /// <summary>
+    ///  Finds a Role by ID.
+    /// </summary>
+    /// <param name="roleId"></param>
+    /// <returns></returns>
+    public async Task<Role?> FindRoleByIdAsync(int roleId)
+    {
+        return await _context.Set<Role>().FindAsync(roleId);
+    }
+    
+    /// <summary>
+    ///  Finds a UserAggregate by ID with Roles included.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async Task<UserAggregate?> FindByIdAsync(int id)
+    {
+        return await _context.Set<UserAggregate>()
+            .Include(u => u.Roles)
+            .FirstOrDefaultAsync(u => u.Id == id);
     }
 }
