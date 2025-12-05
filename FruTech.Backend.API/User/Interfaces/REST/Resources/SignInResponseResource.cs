@@ -5,7 +5,7 @@ namespace FruTech.Backend.API.User.Interfaces.REST.Resources;
 /// <param name="Id"></param>
 /// <param name="UserName"></param>
 /// <param name="Email"></param>
-/// <param name="RoleId"></param>
 /// <param name="Token"></param>
-public record SignInResponseResource(int Id, string UserName, string Email, int RoleId, string Token);
+/// <param name="RoleId"></param>
+public record SignInResponseResource(int Id, string UserName, string Email, string Token, int RoleId);
 

@@ -57,7 +57,7 @@ public class UsersController : ControllerBase
         var user = await _userCommandService.Handle(command);
         if (user == null) return Unauthorized();
         var token = _tokenService.GenerateToken(user);
-        var response = new SignInResponseResource(user.Id, user.UserName, user.Email, user.UserRole?.RoleId ?? 0, token);
+        var response = new SignInResponseResource(user.Id, user.UserName, user.Email, token, user.UserRole?.RoleId ?? 0);
         return Ok(response);
     }
 
