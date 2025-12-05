@@ -27,7 +27,9 @@ public class UserRepository : BaseRepository<UserAggregate>, IUserRepository
     /// <returns></returns>
     public async Task<UserAggregate?> FindByEmailAsync(string email)
     {
-        return await _context.Set<UserAggregate>().FirstOrDefaultAsync(u => u.Email == email);
+        return await _context.Set<UserAggregate>()
+            .Include(u => u.UserRole)
+            .FirstOrDefaultAsync(u => u.Email == email);
     }
     /// <summary>
     ///  Finds a UserAggregate by identificator.
