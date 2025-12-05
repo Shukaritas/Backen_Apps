@@ -38,4 +38,16 @@ public class UserRepository : BaseRepository<UserAggregate>, IUserRepository
     {
         return await _context.Set<UserAggregate>().FirstOrDefaultAsync(u => u.Identificator == identificator);
     }
+    
+    /// <summary>
+    ///  Finds a UserAggregate by ID including UserRole relationship.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public new async Task<UserAggregate?> FindByIdAsync(int id)
+    {
+        return await _context.Set<UserAggregate>()
+            .Include(u => u.UserRole)
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
 }
