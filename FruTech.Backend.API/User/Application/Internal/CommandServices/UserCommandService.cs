@@ -39,15 +39,8 @@ public class UserCommandService : IUserCommandService
         var existingId = await _userRepository.FindByIdentificatorAsync(command.Identificator);
         if (existingId != null) return null; 
 
-        // Buscar el rol por ID
-        var role = await _userRepository.FindRoleByIdAsync(command.RoleId);
-        if (role == null) return null; // Rol no encontrado
-
         var user = new UserAggregate(command.UserName, command.Email, command.PhoneNumber, command.Identificator);
         user.HashPassword(command.Password);
-        
-        // Asociar el rol al usuario
-        user.Roles.Add(role);
 
         await _userRepository.AddAsync(user);
         await _unitOfWork.CompleteAsync();

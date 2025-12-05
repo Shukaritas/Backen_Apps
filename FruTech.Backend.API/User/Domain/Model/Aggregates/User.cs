@@ -12,9 +12,6 @@ namespace FruTech.Backend.API.User.Domain.Model.Aggregates
         public string PhoneNumber { get; private set; } = string.Empty;
         public string Identificator { get; private set; } = string.Empty;
         public string PasswordHash { get; private set; } = string.Empty;
-        
-        // Relación muchos a muchos con Role
-        public ICollection<Entities.Role> Roles { get; set; } = new List<Entities.Role>();
 
         private User() { }
         /// <summary>
